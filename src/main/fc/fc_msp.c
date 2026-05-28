@@ -390,6 +390,52 @@ static bool mspFcProcessOutCommand(uint16_t cmdMSP, sbuf_t *dst, mspPostProcessF
     UNUSED(mspPostProcessFn);
 
     switch (cmdMSP) {
+        case MSP_BETALINK:
+        {
+
+        // Send timestamp in us - OK
+        sbufWriteU32(dst, micros());
+
+        // Sbed 4 stick and 4 aux channels - OK 12 channels for crsf    
+        for (int i = 0; i < rxRuntimeConfig.channelCount; i++) {
+            sbufWriteU16(dst, rxGetChannelValue(i));
+        }
+
+    
+        // Send battery data 
+        sbufWriteU16(dst, getBatteryVoltage()); // in 0.01V steps - TODO: check after flash if the value is the same as from betaflight
+    
+        sbufWriteU16(dst, (int16_t)constrain(getAmperage(), -0x8000, 0x7FFF)); // send current in 0.01 A steps, range is -320A to 320A
+    
+    
+        sbufWriteU16(dst, (uint16_t)constrain(getMAhDrawn(), 0, 0xFFFF)); // milliamp hours drawn from battery
+    
+
+    
+    
+        // Send IMU raw data    
+        for (int i = 0; i < 3; i++) {
+            sbufWriteU16(dst, (int16_t)lrintf(acc.accADCf[i] * 512)); // TODO: check scaling factor 
+        }
+        for (int i = 0; i < 3; i++) {
+            sbufWriteU16(dst, gyroRateDps(i));
+        }
+        // OK 
+        for (int i = 0; i < 3; i++) {
+        #ifdef USE_MAG
+            sbufWriteU16(dst, lrintf(mag.magADC[i]));
+        #else
+            sbufWriteU16(dst, 0);
+        #endif
+        }
+            
+ 
+        // Send Euler angles   - OK
+        sbufWriteU16(dst, attitude.values.roll);
+        sbufWriteU16(dst, attitude.values.pitch);
+        sbufWriteU16(dst, attitude.values.yaw);
+        }
+        break; 
     case MSP_API_VERSION:
         sbufWriteU8(dst, MSP_PROTOCOL_VERSION);
         sbufWriteU8(dst, API_VERSION_MAJOR);
