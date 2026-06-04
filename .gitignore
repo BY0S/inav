@@ -50,3 +50,7 @@ tokens.yaml
 # Local development files
 .semgrepignore
 build_sitl/
+/build-nix/
+/.idea/
+.antigravitycli
+
