@@ -7,14 +7,22 @@ REPO_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
 BUILD_DIR="$REPO_ROOT/build-nix"
 SHELL_FILE="$REPO_ROOT/shell.nix"
 
-# Sourcing the Nix daemon profile if Nix is not already in the PATH
+# Sourcing the Nix profile if Nix is not already in the PATH
 if ! command -v nix-shell &> /dev/null; then
-    if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-    else
-        echo "❌ Nix is not installed or not running. Please restart your shell or check your Nix installation."
-        exit 1
-    fi
+    for profile in \
+        "$HOME/.nix-profile/etc/profile.d/nix.sh" \
+        "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" \
+        "/etc/profile.d/nix.sh"; do
+        if [ -e "$profile" ]; then
+            . "$profile"
+            break
+        fi
+    done
+fi
+
+if ! command -v nix-shell &> /dev/null; then
+    echo "❌ Nix is not installed or nix-shell is not in your PATH. Please check your installation."
+    exit 1
 fi
 
 echo "=========================================================="
