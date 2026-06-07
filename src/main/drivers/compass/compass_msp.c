@@ -71,6 +71,17 @@ void mspMagReceiveNewData(uint8_t * bufferPtr)
     mspMagLastUpdateMs = millis();
 }
 
+void mspMagUpdateData(int16_t x, int16_t y, int16_t z)
+{
+    mspMagData[X] = (float)x;
+    mspMagData[Y] = (float)y;
+    mspMagData[Z] = (float)z;
+
+    applySensorAlignment(mspMagData, mspMagData, CW90_DEG_FLIP);
+
+    mspMagLastUpdateMs = millis();
+}
+
 static bool mspMagRead(magDev_t *magDev)
 {
     UNUSED(magDev);

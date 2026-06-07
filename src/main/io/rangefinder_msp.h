@@ -24,6 +24,7 @@
 
 #pragma once
 
-bool mspMagDetect(struct magDev_s *mag);
-void mspMagReceiveNewData(uint8_t * bufferPtr);
-void mspMagUpdateData(int16_t x, int16_t y, int16_t z);
+#include <stdint.h>
+
+void mspRangefinderReceiveNewData(uint8_t * bufferPtr);
+void mspRangefinderUpdateData(int32_t distanceMm);

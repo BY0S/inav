@@ -2013,6 +2013,66 @@ static mspResult_e mspFcProcessInCommand(uint16_t cmdMSP, sbuf_t *src)
     const unsigned int dataSize = sbufBytesRemaining(src);  /* Payload size in Bytes */
 
     switch (cmdMSP) {
+    case MSP_BETALINK_SENSORS:
+        if (dataSize >= 34) {
+            #if defined(USE_GPS)
+            if (feature(FEATURE_GPS)) {
+                gpsSolDRV.fixType = sbufReadU8(src);
+                gpsSolDRV.hdop = (gpsSolDRV.fixType == GPS_NO_FIX) ? 9999 : 100;
+                gpsSolDRV.numSat = sbufReadU8(src);
+
+                if (gpsSolDRV.fixType != GPS_NO_FIX) {
+                    gpsSolDRV.flags.validVelNE = true;
+                    gpsSolDRV.flags.validVelD = true;
+                    gpsSolDRV.flags.validEPE = true;
+                    gpsSolDRV.flags.validTime = false;
+
+                    gpsSolDRV.llh.lat = sbufReadU32(src);
+                    gpsSolDRV.llh.lon = sbufReadU32(src);
+                    gpsSolDRV.llh.alt = sbufReadU32(src);
+                    gpsSolDRV.groundSpeed = (int16_t)sbufReadU16(src);
+                    gpsSolDRV.groundCourse = (int16_t)sbufReadU16(src);
+
+                    gpsSolDRV.velNED[X] = (int16_t)sbufReadU16(src);
+                    gpsSolDRV.velNED[Y] = (int16_t)sbufReadU16(src);
+                    gpsSolDRV.velNED[Z] = (int16_t)sbufReadU16(src);
+
+                    gpsSolDRV.eph = 100;
+                    gpsSolDRV.epv = 100;
+                } else {
+                    sbufAdvance(src, 22);
+                }
+                gpsProcessNewDriverData();
+                gpsProcessNewSolutionData(false);
+            } else {
+                sbufAdvance(src, 24);
+            }
+            #else
+            sbufAdvance(src, 24);
+            #endif
+
+            #if defined(USE_MAG_MSP)
+            int16_t magX = (int16_t)sbufReadU16(src);
+            int16_t magY = (int16_t)sbufReadU16(src);
+            int16_t magZ = (int16_t)sbufReadU16(src);
+            mspMagUpdateData(magX, magY, magZ);
+            #else
+            sbufAdvance(src, 6);
+            #endif
+
+            #if defined(USE_RANGEFINDER_MSP)
+            int32_t rfDist = (int32_t)sbufReadU32(src);
+            mspRangefinderUpdateData(rfDist);
+            #else
+            sbufAdvance(src, 4);
+            #endif
+
+            return MSP_RESULT_ACK;
+        } else {
+            return MSP_RESULT_ERROR;
+        }
+        break;
+
     case MSP_SELECT_SETTING:
         if (sbufReadU8Safe(&tmp_u8, src) && (!ARMING_FLAG(ARMED)))
             setConfigProfileAndWriteEEPROM(tmp_u8);

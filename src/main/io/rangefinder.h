@@ -28,6 +28,7 @@
 
 #include "sensors/rangefinder.h"
 #include "drivers/rangefinder/rangefinder_virtual.h"
+#include "io/rangefinder_msp.h"
 
 extern virtualRangefinderVTable_t rangefinderMSPVtable;
 extern virtualRangefinderVTable_t rangefinderBenewakeVtable;
@@ -35,5 +36,4 @@ extern virtualRangefinderVTable_t rangefinderUSD1Vtable;
 extern virtualRangefinderVTable_t rangefinderNanoradarVtable; //NRA15/NRA24
 extern virtualRangefinderVTable_t rangefinderFakeVtable;
 
-void mspRangefinderReceiveNewData(uint8_t * bufferPtr);
 void fakeRangefindersSetData(int32_t data);
