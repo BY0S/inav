@@ -162,6 +162,7 @@
 #define MSP_SET_VOLTAGE_METER_CONFIG    57
 
 #define MSP_SONAR_ALTITUDE              58 //out message get surface altitude [cm]
+#define MSP_BETALINK_SENSORS            62
 #define MSP_BETALINK                    63 // out message    Betalink transaction opcode
 //
 // Baseflight MSP commands (if enabled they exist in Cleanflight)
