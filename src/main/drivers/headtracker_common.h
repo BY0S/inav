@@ -109,8 +109,8 @@ void taskUpdateHeadTracker(timeUs_t currentTimeUs);
 bool headtrackerCommonIsEnabled(void);
 
 
-#ifdef __cplusplus
-}
 #endif
 
+#ifdef __cplusplus
+}
 #endif

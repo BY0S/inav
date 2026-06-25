@@ -80,6 +80,12 @@ void mspRangefinderReceiveNewData(uint8_t * bufferPtr)
     hasNewData = true;
 }
 
+void mspRangefinderUpdateData(int32_t distanceMm)
+{
+    sensorData = distanceMm / 10;
+    hasNewData = true;
+}
+
 virtualRangefinderVTable_t rangefinderMSPVtable = {
     .detect = mspRangefinderDetect,
     .init = mspRangefinderInit,

@@ -7,6 +7,10 @@ set(MAIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../src/main")
 set_property(SOURCE alignsensor_unittest.cc PROPERTY depends
     "common/maths.c" "sensors/boardalignment.c")
 
+set_property(SOURCE betalink_sensors_unittest.cc PROPERTY definitions USE_RANGEFINDER_MSP USE_MAG_MSP)
+set_property(SOURCE betalink_sensors_unittest.cc PROPERTY depends
+    "io/rangefinder_msp.c" "drivers/compass/compass_msp.c" "sensors/boardalignment.c" "common/maths.c")
+
 set_property(SOURCE bitarray_unittest.cc PROPERTY depends "common/bitarray.c")
 
 set_property(SOURCE flight_imu_unittest.cc PROPERTY depends     "build/debug.c"
