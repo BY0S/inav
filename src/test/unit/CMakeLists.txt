@@ -20,6 +20,9 @@ set_property(SOURCE flight_imu_unittest.cc PROPERTY depends     "build/debug.c"
 
 set_property(SOURCE maths_unittest.cc PROPERTY depends "common/maths.c")
 
+set_property(SOURCE navigation_adjustment_unittest.cc PROPERTY depends
+    "navigation/navigation_adjustment.c")
+
 set_property(SOURCE olc_unittest.cc PROPERTY depends "common/olc.c")
 
 set_property(SOURCE rcdevice_unittest.cc PROPERTY definitions USE_RCDEVICE)
