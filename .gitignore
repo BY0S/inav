@@ -51,9 +51,11 @@ tokens.yaml
 .semgrepignore
 build_sitl/
 /build-nix/
+/build-nix-sitl/
 /.idea/
 .antigravitycli
 /.direnv/
 /build-sitl/
 /build-test/
+/build_test/
 

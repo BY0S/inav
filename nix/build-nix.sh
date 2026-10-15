@@ -25,19 +25,31 @@ if ! command -v nix-shell &> /dev/null; then
     exit 1
 fi
 
-if [ ! -d "$BUILD_DIR" ] || [ ! -f "$BUILD_DIR/build.ninja" ]; then
-    echo "⚠️ Build directory not configured yet. Running configuration script..."
-    "$SCRIPT_DIR/configure-nix.sh"
-fi
-
 if [[ $# == 0 ]]; then
+    if [ ! -d "$BUILD_DIR" ] || [ ! -f "$BUILD_DIR/build.ninja" ]; then
+        echo "⚠️ Build directory not configured yet. Running configuration script..."
+        "$SCRIPT_DIR/configure-nix.sh"
+    fi
     echo "Usage: ./nix/build-nix.sh <TARGET>"
-    echo "Available targets list:"
+    echo "Available targets list (plus SITL):"
     nix-shell "$SHELL_FILE" --run "ninja -C \"$BUILD_DIR\" -t targets | grep -E '^[^:]+' | cut -d: -f1 | sort | uniq" || true
     exit 1
 fi
 
 TARGET="$1"
+
+if [[ "$TARGET" == "SITL" ]] || [[ "$TARGET" == "inav_9.1.0_SITL" ]]; then
+    BUILD_DIR="$REPO_ROOT/build-nix-sitl"
+    if [ ! -d "$BUILD_DIR" ] || [ ! -f "$BUILD_DIR/build.ninja" ]; then
+        echo "⚠️ SITL build directory not configured yet. Running configuration script (--sitl)..."
+        "$SCRIPT_DIR/configure-nix.sh" --sitl
+    fi
+else
+    if [ ! -d "$BUILD_DIR" ] || [ ! -f "$BUILD_DIR/build.ninja" ]; then
+        echo "⚠️ Build directory not configured yet. Running configuration script..."
+        "$SCRIPT_DIR/configure-nix.sh"
+    fi
+fi
 
 echo "=========================================================="
 echo "🚀 Building target [$TARGET] via Nix..."
