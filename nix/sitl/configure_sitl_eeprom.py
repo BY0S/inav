@@ -2,9 +2,6 @@
 """
 Generates a pre-configured eeprom.bin for INAV SITL + X-Plane 12 testing.
 
-Note: This is for drone in small tests, you should adapt it if there is anything
-wrong or whatever you consider to apply.
-
 Configures:
 - UART2 (TCP 5761) for MSP companion control alongside UART1 (TCP 5760)
 - receiver_type = MSP (so MSP_SET_RAW_RC works without ARMING_DISABLED_RC_LINK)
@@ -54,7 +51,7 @@ def send_cli(commands, host="127.0.0.1", port=5760):
 
 def main():
     parser = argparse.ArgumentParser(description="Configure INAV SITL eeprom.bin for X-Plane 12 testing")
-    default_sitl_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../build-nix-sitl"))
+    default_sitl_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../inav/build-nix-sitl"))
     parser.add_argument("--sitl-dir", default=default_sitl_dir, help="Directory where eeprom.bin will be written")
     parser.add_argument("--sitl-bin", default=None, help="Path to inav_*_SITL binary")
     args = parser.parse_args()
@@ -70,7 +67,7 @@ def main():
         sitl_bin = candidate_bin if os.path.exists(candidate_bin) else fallback_bin
 
     if not os.path.exists(sitl_bin):
-        raise FileNotFoundError(f"SITL binary not found at: {sitl_bin}. Run ./nix/build-nix.sh SITL first.")
+        raise FileNotFoundError(f"SITL binary not found at: {sitl_bin}")
 
     eeprom_path = os.path.join(sitl_dir, "eeprom.bin")
     print(f"Configuring {eeprom_path} using {sitl_bin}...")
@@ -101,6 +98,7 @@ def main():
             "set pitot_hardware = NONE",
             "set init_gyro_cal = OFF",
             "set inav_gravity_cal_tolerance = 250",
+            "set inav_w_z_baro_p = 5.000",
             "set nav_extra_arming_safety = ALLOW_BYPASS",
             "set nav_wp_max_safe_distance = 500",
             "set nav_wp_radius = 1500",

@@ -457,3 +457,15 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+### 4. Short-Hop (15m) & Smooth Landing Validation (`nix/sitl/test_short_hop_land.py`)
+
+For rapid, repeatable validation of vertical liftoff, short-distance (`15m`) translation, hover stabilization, and soft touchdown without crashing or reloading X-Plane scenery, use `nix/sitl/test_short_hop_land.py`:
+
+```bash
+python3 ./nix/sitl/test_short_hop_land.py --distance-m 15 --hover-alt-m 1.2
+```
+
+* **Fast In-Place Aircraft Reset (`< 0.5s`)**: Sends `CMND\0sim/operation/reset_to_runway`, `CMND\0sim/operation/fix_all_systems`, and zeroes `local_vx/vy/vz` and angular rates (`P/Q/R`) via UDP (`port 49000`) for back-to-back iterations without restarting X-Plane 12.
+* **Live Crash Suppression**: Continuously writes `0.0` to `sim/operation/prefs/warn_overgforce`, `warn_overspeed`, and `sim/flightmodel/failures/over_g` datarefs while flying and landing.
+
