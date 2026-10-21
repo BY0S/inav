@@ -3,6 +3,8 @@
 pkgs.mkShell {
   name = "inav-dev-shell";
 
+  hardeningDisable = [ "all" ];
+
   # Development tools and compiler dependencies
   buildInputs = with pkgs; [
     git
